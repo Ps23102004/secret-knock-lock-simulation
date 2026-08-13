@@ -1,0 +1,140 @@
+{
+  "source_file": "public/reference/secret-knock-lock-reference.png",
+  "original_path": "/Users/parthsingh/Desktop/265D9CFE-D9A7-4FD2-8789-AB9D265D10BB.png",
+  "analyzed_by": "Visual Reference Analyst (sub-agent #2)",
+  "analyzed_on": "2026-04-25",
+  "image_summary": "Annotated 3D rendering of a secret-knock door lock mounted on a vertical wood-plank door. The lock housing has a transparent front cover so the internal Arduino, battery pack, motor driver, vertical DC motor, vertical drive shaft, brass main gear, blue rack gear, and sliding bolt are all visible. The right side of the image contains a 7-step System Flow legend; the bottom contains an Electrical Flow legend, a Lock States diagram, and a Mechanical Close-Up of the gear/rack engagement.",
+  "scene_layout": {
+    "background": "Dark vertical wood-plank door with warm brown tones and visible plank seams.",
+    "housing_position": "Center-left of the door, mounted on the surface, with door frame visible to the right.",
+    "housing_style": "Dark gray/black rectangular enclosure with a transparent (cutaway) front, showing all internals.",
+    "annotation_style": "Numbered yellow/white callouts with thin pointer lines; legend panels in dark translucent boxes."
+  },
+  "components": [
+    {
+      "id": "knock_sensor_module",
+      "label": "1. Knock Detected",
+      "color": "Black housing with a dark grille",
+      "position_in_image": "Outside the housing, top-left, attached to the door surface",
+      "annotation": "Vibration sensed by knock sensor (blue arc waves)"
+    },
+    {
+      "id": "arduino_uno",
+      "label": "2. Pattern Validated",
+      "color": "Green PCB with silver USB / black ATmega chip",
+      "position_in_image": "Inside housing, top-left",
+      "annotation": "Arduino checks sequence"
+    },
+    {
+      "id": "battery_pack",
+      "label": "3. Power Activated",
+      "color": "Black holder with two cylindrical AA cells",
+      "position_in_image": "Inside housing, top-right",
+      "annotation": "Battery supplies power to the system (yellow/orange arrows)"
+    },
+    {
+      "id": "motor_driver",
+      "label": "Motor Driver",
+      "color": "Small green PCB with blue terminal blocks",
+      "position_in_image": "Inside housing, mid-right (between battery and motor)",
+      "annotation": "Routes battery power to motor under Arduino control"
+    },
+    {
+      "id": "dc_motor_vertical_mount",
+      "label": "DC Motor (Vertical Mount)",
+      "color": "Dark gray cylinder with copper / brass top end-cap",
+      "position_in_image": "Center of housing, mounted vertically",
+      "annotation": "Cylinder axis is VERTICAL — shaft exits the bottom"
+    },
+    {
+      "id": "vertical_motor_shaft",
+      "label": "Vertical Shaft (Drives Gear)",
+      "color": "Silver cylindrical rod",
+      "position_in_image": "Below motor, going straight down into the gear hub",
+      "annotation": "Same axis as motor and gear"
+    },
+    {
+      "id": "main_drive_gear",
+      "label": "Main Gear (Rotates)",
+      "color": "Brass / gold metallic with visible spur teeth",
+      "position_in_image": "Below the shaft, in lower-center of housing",
+      "annotation": "Rotates around the vertical axis; curved yellow arrows show rotation"
+    },
+    {
+      "id": "rack_gear",
+      "label": "Rack Gear (Moves Horizontally)",
+      "color": "Blue/teal toothed bar",
+      "position_in_image": "Engages the right side of the main gear and extends rightward toward the strike plate",
+      "annotation": "Slides horizontally as the main gear rotates"
+    },
+    {
+      "id": "sliding_bolt",
+      "label": "Sliding Bolt (Retracts / Extends)",
+      "color": "Blue rectangular bolt",
+      "position_in_image": "On the right side, projecting through housing wall into the strike plate",
+      "annotation": "Bolt body that physically locks the door"
+    },
+    {
+      "id": "strike_plate",
+      "label": "Strike Plate",
+      "color": "Brushed metal silver",
+      "position_in_image": "On the door frame to the right of the housing",
+      "annotation": "Bolt receives here when extended"
+    }
+  ],
+  "annotation_arrows": {
+    "blue": "Signal flow — knock sensor → Arduino → motor driver",
+    "yellow_orange": "Power flow — battery → motor driver → motor",
+    "green": "Physical mechanical motion — bolt retracting, rack moving",
+    "curved_yellow": "Rotation arrows on motor shaft and main gear",
+    "black": "Ground reference"
+  },
+  "legend_panels": [
+    {
+      "title": "SYSTEM FLOW",
+      "position": "top-right",
+      "steps": [
+        "1. Knock Detected",
+        "2. Pattern Validated",
+        "3. Power Activated",
+        "4. Motor Rotates",
+        "5. Gear Rotates",
+        "6. Bolt Retracts",
+        "7. Unlocked"
+      ]
+    },
+    {
+      "title": "ELECTRICAL FLOW",
+      "position": "bottom-center",
+      "items": [
+        "Signal Flow (Blue)",
+        "Power Flow (Yellow)",
+        "Ground (Black)",
+        "Physical Motion (Green)"
+      ]
+    },
+    {
+      "title": "LOCK STATES",
+      "position": "bottom-center-right",
+      "items": [
+        { "state": "LOCKED",   "indicator": "red",   "description": "Bolt Extended" },
+        { "state": "UNLOCKED", "indicator": "green", "description": "Bolt Retracted" }
+      ]
+    },
+    {
+      "title": "MECHANICAL CLOSE-UP",
+      "position": "bottom-left",
+      "description": "Detail view: vertical motor shaft drives gear → gear rotates → rack moves → bolt retracts."
+    }
+  ],
+  "design_constraints_for_simulation": [
+    "Motor axis must be vertical (Y-up).",
+    "Motor shaft must be visible and share the same vertical axis as the gear hub.",
+    "Gear teeth must be visible and engage a horizontal rack.",
+    "Rack and bolt must move together horizontally.",
+    "Bolt must visibly seat into a strike plate on the door frame.",
+    "Color coding must match the legend (blue/yellow/green/black).",
+    "A System Flow side panel must mirror the reference legend.",
+    "A LOCKED / UNLOCKED indicator must be visible."
+  ]
+}

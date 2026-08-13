@@ -1,0 +1,148 @@
+{
+  "components": [
+    {
+      "id": "door_panel",
+      "label": "Door Panel",
+      "type": "structural",
+      "scene_position": [0, 0.6, -0.05],
+      "dimensions": "5.4 W × 3.6 H × 0.1 D",
+      "material": "Wood planks (vertical)",
+      "fixed_or_moving": "fixed"
+    },
+    {
+      "id": "lock_housing",
+      "label": "Lock Housing",
+      "type": "enclosure",
+      "scene_position": [0, 0.85, 0],
+      "dimensions": "2.4 W × 1.8 H × 0.55 D",
+      "material": "Dark gray ABS / metal",
+      "fixed_or_moving": "fixed",
+      "notes": "Front cover is transparent / cutaway."
+    },
+    {
+      "id": "knock_sensor_module",
+      "label": "Knock Sensor Module",
+      "type": "input_sensor",
+      "scene_position": [-1.6, 1.15, 0.05],
+      "interfaces": ["digital_input → Arduino D2"],
+      "fixed_or_moving": "fixed",
+      "role_in_unlock_sequence": "Detects door vibrations and triggers the Arduino interrupt."
+    },
+    {
+      "id": "arduino_uno",
+      "label": "Arduino UNO",
+      "type": "controller",
+      "scene_position": [-0.78, 1.35, 0.15],
+      "interfaces": ["digital_in (sensor)", "digital_out (motor driver)"],
+      "fixed_or_moving": "fixed",
+      "role_in_unlock_sequence": "Validates the knock pattern and commands the motor driver."
+    },
+    {
+      "id": "battery_pack",
+      "label": "Battery Pack",
+      "type": "power_source",
+      "scene_position": [0.7, 1.35, 0.18],
+      "voltage": "≈ 6V (4× AA series) — diagram simplified to 2 cells visible",
+      "fixed_or_moving": "fixed",
+      "role_in_unlock_sequence": "Supplies motor driver and Arduino with power."
+    },
+    {
+      "id": "motor_driver",
+      "label": "Motor Driver",
+      "type": "h_bridge",
+      "scene_position": [0.82, 0.95, 0.16],
+      "interfaces": ["VIN (battery+)", "GND (battery-)", "IN1/IN2 (Arduino)", "OUT1/OUT2 (motor)"],
+      "fixed_or_moving": "fixed",
+      "role_in_unlock_sequence": "Switches battery current to drive the motor in either direction."
+    },
+    {
+      "id": "dc_motor_vertical_mount",
+      "label": "DC Motor (Vertical Mount)",
+      "type": "actuator",
+      "scene_position": [-0.05, 0.95, 0.16],
+      "axis": "Y (vertical)",
+      "fixed_or_moving": "rotates about Y, body fixed",
+      "role_in_unlock_sequence": "Converts electrical power into rotational torque."
+    },
+    {
+      "id": "vertical_motor_shaft",
+      "label": "Vertical Motor Shaft",
+      "type": "transmission",
+      "scene_position": [-0.05, 0.5, 0.16],
+      "axis": "Y (vertical) — shared with motor and gear",
+      "fixed_or_moving": "rotates about Y",
+      "role_in_unlock_sequence": "Transfers motor rotation to the main gear; orange marker stripe shows angle."
+    },
+    {
+      "id": "main_drive_gear",
+      "label": "Main Gear",
+      "type": "transmission",
+      "scene_position": [-0.05, 0.27, 0.16],
+      "teeth": 18,
+      "pitch_radius": 0.21,
+      "fixed_or_moving": "rotates about Y, same axis as shaft",
+      "role_in_unlock_sequence": "Converts shaft rotation into linear rack motion."
+    },
+    {
+      "id": "rack_gear",
+      "label": "Rack Gear",
+      "type": "transmission",
+      "scene_position": [0.60, 0.27, 0.43],
+      "axis": "X (horizontal)",
+      "fixed_or_moving": "translates along X",
+      "role_in_unlock_sequence": "Couples gear rotation to the bolt's linear motion."
+    },
+    {
+      "id": "rack_teeth_detail",
+      "label": "Rack Teeth (Trapezoidal)",
+      "type": "transmission_detail",
+      "scene_position_relative_to": "rack_gear (-Z face)",
+      "tooth_count": 16,
+      "tooth_pitch": 0.072,
+      "material": "meshPhysicalMaterial #60a5fa base + #93c5fd tip, clearcoat 0.6+",
+      "fixed_or_moving": "translates with rack",
+      "role_in_unlock_sequence": "Visible mesh element — clarifies how gear rotation drives linear bolt motion."
+    },
+    {
+      "id": "gear_rack_contact_region",
+      "label": "Gear/Rack Contact Highlight",
+      "type": "visual_indicator",
+      "scene_position": [-0.05, 0.27, 0.37],
+      "fixed_or_moving": "fixed in world space (does not translate with rack)",
+      "role_in_unlock_sequence": "Soft yellow pulse at the engagement point during motion."
+    },
+    {
+      "id": "sliding_bolt",
+      "label": "Sliding Bolt",
+      "type": "lock_actuator",
+      "scene_position": [1.2, 0.27, 0.37],
+      "axis": "X (horizontal)",
+      "fixed_or_moving": "translates along X with rack",
+      "role_in_unlock_sequence": "Seats into / retracts from strike plate."
+    },
+    {
+      "id": "strike_plate",
+      "label": "Strike Plate",
+      "type": "structural",
+      "scene_position": [1.50, 0.27, 0.05],
+      "fixed_or_moving": "fixed",
+      "role_in_unlock_sequence": "Receives the bolt when locked."
+    },
+    {
+      "id": "macbook_microphone",
+      "label": "MacBook Microphone (optional input)",
+      "type": "external_input",
+      "interfaces": ["navigator.mediaDevices.getUserMedia({ audio: true })"],
+      "fixed_or_moving": "n/a",
+      "role_in_unlock_sequence": "Optional. Captures real-world knocks/taps/claps near the laptop and feeds them into the unlock sequence."
+    },
+    {
+      "id": "mic_knock_detector",
+      "label": "Mic Knock Detector",
+      "type": "software",
+      "interfaces": ["AnalyserNode (Web Audio API)", "AnimationCommand: play_unlock"],
+      "fixed_or_moving": "n/a",
+      "role_in_unlock_sequence": "Optional. RMS spike detector with sensitivity slider, baseline tracking, and 1.5s cooldown."
+    }
+  ]
+}

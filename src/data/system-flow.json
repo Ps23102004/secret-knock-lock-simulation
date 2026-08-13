@@ -1,0 +1,160 @@
+{
+  "optional_mic_path": [
+    {
+      "name": "mic_permission_requested",
+      "duration": "varies (browser dialog)",
+      "active_components": ["mic_knock_detector"],
+      "visual_highlights": ["Mic panel status: 'Waiting for permission…'"],
+      "explanation": "User clicked 'Enable Mic Knock Detection'. Browser prompts for microphone access."
+    },
+    {
+      "name": "mic_listening",
+      "duration": "until disabled or knock",
+      "active_components": ["macbook_microphone", "web_audio_api", "analyser_node", "mic_knock_detector"],
+      "visual_highlights": ["Mic panel status: 'Listening for knock…'", "Live audio level meter"],
+      "explanation": "AnalyserNode samples mic audio every animation frame; baseline noise level tracks slowly via EMA."
+    },
+    {
+      "name": "audio_spike_detected",
+      "duration": "single frame",
+      "active_components": ["mic_knock_detector"],
+      "visual_highlights": ["Mic panel status: 'Knock detected!'"],
+      "explanation": "RMS amplitude crossed user threshold AND exceeded baseline × 4.0 AND cooldown elapsed."
+    },
+    {
+      "name": "knock_sequence_triggered",
+      "duration": "0.2s before handoff",
+      "active_components": ["mic_knock_detector", "animation_controller"],
+      "visual_highlights": ["Mic panel status: 'Sequence triggered'"],
+      "explanation": "Mic detector fires `play_unlock` on the AnimationController. From here the rest of the visualization is identical to the manual unlock path — see the main `states` array below starting at `knock_detected`."
+    }
+  ],
+  "states": [
+    {
+      "name": "locked_idle",
+      "duration": 0.3,
+      "active_components": ["arduino_uno"],
+      "visual_highlights": ["Red LOCKED indicator", "Bolt extended into strike plate"],
+      "mechanical_motion": "none",
+      "electrical_flow": "Arduino idle, motor driver disabled, battery resting",
+      "explanation": "Resting state. Arduino is awake and listening on the knock-sensor input."
+    },
+    {
+      "name": "knock_detected",
+      "duration": 1.4,
+      "active_components": ["knock_sensor_module", "arduino_uno"],
+      "visual_highlights": ["Blue knock waves at sensor", "Sensor mic glows blue"],
+      "mechanical_motion": "none",
+      "electrical_flow": "Signal pulse: knock_sensor → arduino (blue)",
+      "explanation": "Vibration on the door reaches the sensor. The Arduino reads the digital edge and starts pattern timing."
+    },
+    {
+      "name": "pattern_validated",
+      "duration": 1.0,
+      "active_components": ["arduino_uno"],
+      "visual_highlights": ["Arduino pin-13 LED blinks"],
+      "mechanical_motion": "none",
+      "electrical_flow": "Internal — Arduino compares timing against stored secret pattern",
+      "explanation": "Pattern matches. Arduino prepares to enable the motor driver."
+    },
+    {
+      "name": "power_activated",
+      "duration": 0.9,
+      "active_components": ["battery_pack", "motor_driver", "arduino_uno"],
+      "visual_highlights": ["Yellow power wires glow", "Motor driver status LED on"],
+      "mechanical_motion": "none",
+      "electrical_flow": "Battery → motor driver (yellow)",
+      "explanation": "Arduino raises an enable signal; the motor driver gates battery current to the motor."
+    },
+    {
+      "name": "motor_rotates",
+      "duration": 0.7,
+      "active_components": ["dc_motor_vertical_mount"],
+      "visual_highlights": ["Motor body lit"],
+      "mechanical_motion": "Motor armature begins to spin around Y",
+      "electrical_flow": "Power continues from driver → motor",
+      "explanation": "Current through the motor coils generates torque on the rotor."
+    },
+    {
+      "name": "shaft_drives_gear",
+      "duration": 0.5,
+      "active_components": ["vertical_motor_shaft"],
+      "visual_highlights": ["Orange shaft marker visibly rotates"],
+      "mechanical_motion": "Vertical shaft rotates about Y; couples directly into gear hub",
+      "electrical_flow": "—",
+      "explanation": "The motor's torque is delivered to the gear through the rigid coupler at the bottom of the shaft."
+    },
+    {
+      "name": "gear_rotates",
+      "duration": 0.6,
+      "active_components": ["main_drive_gear"],
+      "visual_highlights": ["Curved yellow rotation arrow above gear", "Tooth-tip orange marker rotates"],
+      "mechanical_motion": "Gear spins about Y; teeth pass through rack engagement zone",
+      "electrical_flow": "—",
+      "explanation": "Brass spur gear converts shaft rotation into tangential force at the pitch circle."
+    },
+    {
+      "name": "rack_moves",
+      "duration": 1.4,
+      "active_components": ["rack_gear"],
+      "visual_highlights": ["Rack visibly slides along X (with bolt)"],
+      "mechanical_motion": "Rack slides linearly in -X (toward housing center)",
+      "electrical_flow": "—",
+      "explanation": "Gear teeth engage the rack teeth, translating rotation into horizontal travel."
+    },
+    {
+      "name": "bolt_retracts",
+      "duration": 0.7,
+      "active_components": ["sliding_bolt"],
+      "visual_highlights": ["Green motion arrow along bolt", "Bolt clears strike plate"],
+      "mechanical_motion": "Bolt withdraws from strike plate",
+      "electrical_flow": "—",
+      "explanation": "The bolt is rigidly attached to the rack and exits the strike plate cavity."
+    },
+    {
+      "name": "unlocked",
+      "duration": 1.2,
+      "active_components": [],
+      "visual_highlights": ["Green UNLOCKED indicator", "All flow arrows quiet"],
+      "mechanical_motion": "none",
+      "electrical_flow": "Motor driver disabled to save battery",
+      "explanation": "Door is now free to open. System awaits relock command or auto-relock timer."
+    },
+    {
+      "name": "relock_requested",
+      "duration": 0.4,
+      "active_components": ["arduino_uno"],
+      "visual_highlights": ["Brief blue signal pulse"],
+      "mechanical_motion": "none",
+      "electrical_flow": "Arduino re-enables motor driver in REVERSE polarity",
+      "explanation": "Triggered by user button or timer."
+    },
+    {
+      "name": "motor_reverses",
+      "duration": 0.7,
+      "active_components": ["dc_motor_vertical_mount", "main_drive_gear"],
+      "visual_highlights": ["Gear rotation arrow reverses direction"],
+      "mechanical_motion": "Motor and gear spin opposite direction",
+      "electrical_flow": "Reversed driver polarity",
+      "explanation": "H-bridge swaps current direction to drive the motor backwards."
+    },
+    {
+      "name": "bolt_extends",
+      "duration": 1.6,
+      "active_components": ["rack_gear", "sliding_bolt"],
+      "visual_highlights": ["Bolt slides back into strike plate"],
+      "mechanical_motion": "Rack moves +X, bolt re-enters strike",
+      "electrical_flow": "—",
+      "explanation": "The mechanical chain runs in reverse and the bolt reseats."
+    },
+    {
+      "name": "locked_again",
+      "duration": 0.6,
+      "active_components": [],
+      "visual_highlights": ["Red LOCKED indicator returns"],
+      "mechanical_motion": "none",
+      "electrical_flow": "Driver disabled",
+      "explanation": "Back to idle. Cycle complete."
+    }
+  ]
+}
